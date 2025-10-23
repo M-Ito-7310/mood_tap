@@ -1,18 +1,78 @@
 @import "tailwindcss";
 
 @theme {
+  /* Mood Colors - 5-tier system */
   --color-mood-veryBad: #EF4444;
-  --color-mood-bad: #FB923C;
-  --color-mood-neutral: #9CA3AF;
-  --color-mood-good: #60A5FA;
+  --color-mood-bad: #F97316;
+  --color-mood-neutral: #EAB308;
+  --color-mood-good: #22C55E;
   --color-mood-veryGood: #3B82F6;
+
+  /* Background Gradient */
+  --color-bg-gradient-from: #1E293B;
+  --color-bg-gradient-to: #0F172A;
   --color-background-light: #F9FAFB;
   --color-background-dark: #111827;
 
-  --font-family-sans: Inter, "Noto Sans JP", sans-serif;
+  /* Text Colors */
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #CBD5E1;
+  --color-text-muted: #64748B;
+  --color-text-inverse: #0F172A;
 
+  /* UI Accents */
+  --color-border-default: #334155;
+  --color-border-focus: #3B82F6;
+  --color-surface: #1E293B;
+  --color-surface-hover: #334155;
+
+  /* Spacing Scale (aligned with Tailwind) */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Typography */
+  --font-family-sans: Inter, "Noto Sans JP", sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  /* Animations */
   --animate-bounce-in: bounceIn 0.5s ease-out;
   --animate-fade-in: fadeIn 0.3s ease-in;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-scale: scale 0.2s ease-out;
+
+  /* Z-index Scale */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal: 1300;
+  --z-toast: 1400;
 }
 
 @keyframes bounceIn {
@@ -24,4 +84,37 @@
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scale {
+  0% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background: linear-gradient(to bottom, var(--color-bg-gradient-from), var(--color-bg-gradient-to));
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Touch optimization for mobile */
+@media (hover: none) and (pointer: coarse) {
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }

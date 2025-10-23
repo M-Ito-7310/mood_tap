@@ -1,36 +1,63 @@
+'use client';
+
+import { BaseLayout } from './components/layout/BaseLayout';
+import { Container } from './components/layout/Container';
+import { MoodButton } from './components/mood/MoodButton';
+import type { MoodLevel } from './components/mood/MoodButton';
+
 export default function Home() {
+  const handleMoodClick = (level: MoodLevel, label: string) => {
+    console.log(`Mood selected: ${level} (${label})`);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background-light">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          MoodTap
-        </h1>
-        <p className="text-xl text-gray-600">
-          たった3秒で、心の健康を可視化する
-        </p>
+    <BaseLayout>
+      <Container variant="narrow">
+        <div className="text-center space-y-8">
+          <header className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text-primary)]">
+              MoodTap
+            </h1>
+            <p className="text-lg md:text-xl text-[var(--color-text-secondary)]">
+              たった3秒で、心の健康を可視化する
+            </p>
+          </header>
 
-        <div className="mt-8 flex gap-4 justify-center">
-          <div className="w-16 h-16 rounded-full bg-mood-veryBad flex items-center justify-center text-2xl">
-            😢
+          <div className="flex gap-4 justify-center flex-wrap">
+            <MoodButton
+              level="veryBad"
+              label="とても悪い"
+              onClick={() => handleMoodClick('veryBad', 'とても悪い')}
+            />
+            <MoodButton
+              level="bad"
+              label="悪い"
+              onClick={() => handleMoodClick('bad', '悪い')}
+            />
+            <MoodButton
+              level="neutral"
+              label="普通"
+              onClick={() => handleMoodClick('neutral', '普通')}
+            />
+            <MoodButton
+              level="good"
+              label="良い"
+              onClick={() => handleMoodClick('good', '良い')}
+            />
+            <MoodButton
+              level="veryGood"
+              label="とても良い"
+              onClick={() => handleMoodClick('veryGood', 'とても良い')}
+            />
           </div>
-          <div className="w-16 h-16 rounded-full bg-mood-bad flex items-center justify-center text-2xl">
-            😟
-          </div>
-          <div className="w-16 h-16 rounded-full bg-mood-neutral flex items-center justify-center text-2xl">
-            😐
-          </div>
-          <div className="w-16 h-16 rounded-full bg-mood-good flex items-center justify-center text-2xl">
-            😊
-          </div>
-          <div className="w-16 h-16 rounded-full bg-mood-veryGood flex items-center justify-center text-2xl">
-            😄
-          </div>
+
+          <footer className="pt-8">
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Phase 2: UI Foundation & Design System 完了
+            </p>
+          </footer>
         </div>
-
-        <p className="mt-8 text-sm text-gray-500">
-          Phase 1: プロジェクトセットアップ完了
-        </p>
-      </div>
-    </main>
+      </Container>
+    </BaseLayout>
   );
 }

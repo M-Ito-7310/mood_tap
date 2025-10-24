@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navigation } from '@/components/layout/Navigation';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: 'MoodTap - 1タップ気分記録',
@@ -39,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>
+      <body className={inter.className}>
         <ThemeProvider>
           <div className="pb-16">{children}</div>
           <Navigation />

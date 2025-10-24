@@ -149,6 +149,51 @@ npm start
 
 ---
 
+## デプロイ
+
+### Vercelへのデプロイ
+
+このアプリケーションはVercelで簡単にデプロイできます：
+
+1. **GitHubリポジトリを作成**
+   ```bash
+   git remote add origin https://github.com/yourusername/mood-tap.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+2. **Vercelプロジェクトを作成**
+   - https://vercel.com にアクセス
+   - GitHubでログイン
+   - "Import Project"からリポジトリを選択
+   - フレームワーク設定：Next.js（自動検出）
+
+3. **デプロイ実行**
+   - "Deploy"ボタンをクリック
+   - 自動的にビルドとデプロイが実行されます
+
+### 環境変数
+
+現在、このアプリケーションは環境変数を必要としません（完全にローカルストレージで動作）。
+
+将来的にデータベース連携を追加する場合は、以下の環境変数が必要になります：
+```
+DATABASE_URL=postgresql://...
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=...
+```
+
+### パフォーマンス最適化
+
+本番環境では以下の最適化が適用されています：
+- ✅ Next.js自動画像最適化（AVIF/WebP）
+- ✅ Google Fontsの最適化読み込み
+- ✅ Service Workerによるキャッシング
+- ✅ 静的ページの事前レンダリング
+- ✅ Code Splitting
+
+---
+
 ## ターゲットユーザー
 
 ### 主要ペルソナ
@@ -255,8 +300,8 @@ MIT License
 ---
 
 **プロジェクト開始日**: 2025年10月23日
-**現在のフェーズ**: Phase 0(ドキュメント作成完了)
-**次のステップ**: Phase 1(プロジェクトセットアップ)
+**現在のフェーズ**: Phase 12完了(本番デプロイ準備完了)
+**ステータス**: ✅ MVP完成
 
 ---
 

@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Turbopack設定を追加（Next.js 16対応）
   turbopack: {},
+  // 画像最適化
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
 };
 
 export default withPWA(nextConfig);

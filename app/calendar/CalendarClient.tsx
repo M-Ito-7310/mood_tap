@@ -1,10 +1,13 @@
 'use client';
 
 import { MoodCalendar } from '@/components/calendar/MoodCalendar';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export function CalendarClient() {
+  const { themeGradient } = useTheme();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 px-4">
+    <div className={`min-h-screen bg-gradient-to-br ${themeGradient} py-8 px-4 pb-20`}>
       <div className="max-w-5xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">カレンダー</h1>

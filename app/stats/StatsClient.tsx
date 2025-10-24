@@ -4,13 +4,15 @@ import { useMoodEntries } from '@/hooks/useMoodEntries';
 import { MoodChart } from '@/components/stats/MoodChart';
 import { StreakDisplay } from '@/components/stats/StreakDisplay';
 import { calculateAverageMood, getMoodExtremes } from '@/lib/stats';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export function StatsClient() {
   const { entries, isLoading } = useMoodEntries();
+  const { themeGradient } = useTheme();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br ${themeGradient}`}>
         <div className="text-xl text-gray-600">読み込み中...</div>
       </div>
     );
@@ -20,7 +22,7 @@ export function StatsClient() {
   const { highest, lowest } = getMoodExtremes(entries);
 
   return (
-    <div className="min-h-screen bg-background-light py-8 px-4">
+    <div className={`min-h-screen bg-gradient-to-br ${themeGradient} py-8 px-4 pb-20`}>
       <div className="max-w-5xl mx-auto">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">統計</h1>

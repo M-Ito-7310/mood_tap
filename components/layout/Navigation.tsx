@@ -10,6 +10,7 @@ export function Navigation() {
     { href: '/', label: 'ホーム', icon: '🏠' },
     { href: '/history', label: '履歴', icon: '📅' },
     { href: '/stats', label: '統計', icon: '📊' },
+    { href: '/settings', label: '設定', icon: '⚙️' },
   ];
 
   return (

@@ -31,6 +31,28 @@ export function MoodRecorder() {
     loadTodayEntry();
   }, [getEntryByDate]);
 
+  // キーボードナビゲーション対応
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // 入力フィールドにフォーカスがある場合はスキップ
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // 数字キー 1-5 で気分を選択
+      const key = e.key;
+      if (['1', '2', '3', '4', '5'].includes(key)) {
+        const score = parseInt(key) as MoodScore;
+        if (!isSaving) {
+          handleMoodClick(score);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isSaving]);
+
   const handleMoodClick = async (score: MoodScore) => {
     await saveMoodEntry(score);
   };
@@ -98,6 +120,9 @@ export function MoodRecorder() {
         </h2>
         <p className="text-gray-600">
           1つ選んでタップしてください
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          キーボード操作: 数字キー 1-5 で選択
         </p>
       </div>
 

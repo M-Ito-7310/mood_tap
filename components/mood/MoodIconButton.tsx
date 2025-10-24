@@ -32,6 +32,8 @@ export function MoodIconButton({ score, label, onClick, disabled, selected }: Mo
     <button
       onClick={handleClick}
       disabled={disabled}
+      aria-label={`気分を${MOOD_LABEL_DISPLAY_NAME[label]}として記録`}
+      aria-pressed={selected}
       className={cn(
         'relative flex flex-col items-center gap-2 p-6 rounded-2xl transition-all duration-300 overflow-hidden',
         'hover:scale-105 hover:-translate-y-1 hover:shadow-xl',
@@ -69,6 +71,9 @@ export function MoodIconButton({ score, label, onClick, disabled, selected }: Mo
       <span className="text-sm font-medium text-gray-700 relative z-10">
         {MOOD_LABEL_DISPLAY_NAME[label]}
       </span>
+      <kbd className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded relative z-10">
+        {score}
+      </kbd>
     </button>
   );
 }

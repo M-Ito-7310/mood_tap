@@ -63,14 +63,14 @@ export default function Home() {
 
           {/* 気分記録セクション */}
           <SlideIn delay={100} direction="up">
-            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+            <section aria-label="気分を記録する" className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
               <MoodRecorder />
             </section>
           </SlideIn>
 
           {/* 記録一覧 */}
           <SlideIn delay={200} direction="up">
-            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+            <section aria-label="最近の記録" className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
             <h2 className="text-2xl font-semibold mb-6 text-[var(--color-text-primary)]">
               最近の記録
             </h2>
@@ -90,7 +90,7 @@ export default function Home() {
                     className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl">{MOOD_ICON[entry.moodLabel]}</span>
+                      <span className="text-3xl" role="img" aria-label={MOOD_LABEL_DISPLAY_NAME[entry.moodLabel]}>{MOOD_ICON[entry.moodLabel]}</span>
                       <div>
                         <p className="font-medium text-[var(--color-text-primary)]">
                           {MOOD_LABEL_DISPLAY_NAME[entry.moodLabel]}

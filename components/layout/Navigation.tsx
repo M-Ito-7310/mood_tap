@@ -14,7 +14,7 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 shadow-lg z-50">
+    <nav aria-label="メインナビゲーション" className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 shadow-lg z-50">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex justify-around items-center h-16">
           {navItems.map((item) => {
@@ -23,6 +23,8 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={`${item.label}に移動`}
+                aria-current={isActive ? 'page' : undefined}
                 className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-200 relative ${
                   isActive
                     ? 'text-blue-600 bg-blue-50'

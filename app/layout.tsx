@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { Navigation } from '@/components/layout/Navigation';
 
 export const metadata: Metadata = {
   title: 'MoodTap - 1タップ気分記録',
@@ -37,7 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <div className="pb-16">{children}</div>
+        <Navigation />
+      </body>
     </html>
   );
 }

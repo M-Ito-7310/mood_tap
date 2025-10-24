@@ -24,9 +24,11 @@ export function CalendarDay({
     <button
       onClick={onClick}
       className={cn(
-        'aspect-square p-2 rounded-lg transition-all',
+        'aspect-square p-2 rounded-lg transition-all duration-200',
         'hover:scale-105 hover:shadow-md',
+        'active:scale-95', // Mobile touch feedback
         'focus:outline-none focus:ring-2 focus:ring-blue-500',
+        'touch-manipulation', // Improves mobile tap responsiveness
         !isCurrentMonth && 'opacity-30',
         isToday && 'ring-2 ring-blue-600'
       )}

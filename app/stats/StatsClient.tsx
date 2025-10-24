@@ -5,6 +5,8 @@ import { MoodChart } from '@/components/stats/MoodChart';
 import { StreakDisplay } from '@/components/stats/StreakDisplay';
 import { calculateAverageMood, getMoodExtremes } from '@/lib/stats';
 import { useTheme } from '@/contexts/ThemeContext';
+import { SkeletonCard } from '@/components/ui/SkeletonCard';
+import { SkeletonChart } from '@/components/ui/SkeletonChart';
 
 export function StatsClient() {
   const { entries, isLoading } = useMoodEntries();
@@ -12,8 +14,28 @@ export function StatsClient() {
 
   if (isLoading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br ${themeGradient}`}>
-        <div className="text-xl text-gray-600">読み込み中...</div>
+      <div className={`min-h-screen bg-gradient-to-br ${themeGradient} py-8 px-4 pb-20`}>
+        <div className="max-w-5xl mx-auto">
+          <header className="mb-8 animate-pulse">
+            <div className="h-9 bg-white/20 rounded w-32 mb-2"></div>
+            <div className="h-6 bg-white/20 rounded w-48"></div>
+          </header>
+
+          <div className="space-y-6">
+            {/* Summary cards skeleton */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <SkeletonCard variant="stat" />
+              <SkeletonCard variant="stat" />
+              <SkeletonCard variant="stat" />
+            </div>
+
+            {/* Chart skeleton */}
+            <SkeletonChart />
+
+            {/* Mood extremes skeleton */}
+            <SkeletonCard />
+          </div>
+        </div>
       </div>
     );
   }

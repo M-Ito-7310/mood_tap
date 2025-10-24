@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { MoodEntry } from '@/types/mood';
 import { downloadCSV, downloadJSON } from '@/lib/export';
-import { formatDateISO } from '@/lib/utils';
+import { toISODate } from '@/lib/utils';
 
 interface ExportButtonProps {
   entries: MoodEntry[];
@@ -15,7 +15,7 @@ export function ExportButton({ entries }: ExportButtonProps) {
   const handleExportCSV = () => {
     setIsExporting(true);
 
-    const filename = `moodtap-export-${formatDateISO(new Date())}.csv`;
+    const filename = `moodtap-export-${toISODate(new Date())}.csv`;
     downloadCSV(entries, filename);
 
     setTimeout(() => setIsExporting(false), 1000);
@@ -24,7 +24,7 @@ export function ExportButton({ entries }: ExportButtonProps) {
   const handleExportJSON = () => {
     setIsExporting(true);
 
-    const filename = `moodtap-export-${formatDateISO(new Date())}.json`;
+    const filename = `moodtap-export-${toISODate(new Date())}.json`;
     downloadJSON(entries, filename);
 
     setTimeout(() => setIsExporting(false), 1000);

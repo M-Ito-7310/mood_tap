@@ -23,13 +23,18 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all ${
+                className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-200 relative ${
                   isActive
                     ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-105'
                 }`}
               >
-                <span className="text-2xl">{item.icon}</span>
+                {isActive && (
+                  <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full" />
+                )}
+                <span className={`text-2xl transition-transform ${isActive ? 'scale-110' : ''}`}>
+                  {item.icon}
+                </span>
                 <span className="text-xs font-medium">{item.label}</span>
               </Link>
             );

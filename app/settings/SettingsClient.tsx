@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { ThemeSelector } from '@/components/settings/ThemeSelector';
 import { ExportButton } from '@/components/settings/ExportButton';
 import { useTheme } from '@/contexts/ThemeContext';
+import { SkeletonCard } from '@/components/ui/SkeletonCard';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export function SettingsClient() {
   const { entries, isLoading, clearAllEntries } = useMoodEntries();
@@ -16,14 +18,17 @@ export function SettingsClient() {
     estimatedUsage?: number;
     estimatedQuota?: number;
   } | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   // データベース統計を取得
   useEffect(() => {
     const loadStats = async () => {
+      setIsLoadingStats(true);
       const stats = await getDatabaseStats();
       if (stats) {
         setDbStats(stats);
       }
+      setIsLoadingStats(false);
     };
     loadStats();
   }, [entries]);
@@ -51,8 +56,21 @@ export function SettingsClient() {
 
   if (isLoading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br ${themeGradient}`}>
-        <div className="text-xl text-gray-600">読み込み中...</div>
+      <div className={`min-h-screen bg-gradient-to-br ${themeGradient} pb-20`}>
+        <div className="max-w-2xl mx-auto px-4 py-8">
+          <header className="mb-8 animate-pulse">
+            <div className="h-6 bg-white/20 rounded w-32 mb-4"></div>
+            <div className="h-9 bg-white/20 rounded w-24 mb-2"></div>
+            <div className="h-6 bg-white/20 rounded w-48"></div>
+          </header>
+
+          <div className="space-y-6">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
       </div>
     );
   }
@@ -79,39 +97,45 @@ export function SettingsClient() {
             <h2 className="text-xl font-semibold mb-4 text-gray-900">
               データ統計
             </h2>
-            <div className="space-y-3 text-gray-700">
-              <div className="flex justify-between py-2 border-b border-gray-100">
-                <span>総記録数</span>
-                <span className="font-semibold text-blue-600">
-                  {entries.length} 件
-                </span>
+            {isLoadingStats ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner size="md" />
               </div>
-              <div className="flex justify-between py-2 border-b border-gray-100">
-                <span>メモ付き記録</span>
-                <span className="font-semibold text-purple-600">
-                  {entries.filter((e) => e.note && e.note.trim() !== '').length}{' '}
-                  件
-                </span>
-              </div>
-              {dbStats && (
-                <>
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span>使用ストレージ</span>
-                    <span className="font-semibold text-green-600">
-                      {formatBytes(dbStats.estimatedUsage)}
-                    </span>
-                  </div>
-                  {dbStats.estimatedQuota && (
-                    <div className="flex justify-between py-2">
-                      <span>利用可能容量</span>
-                      <span className="font-semibold text-gray-500">
-                        {formatBytes(dbStats.estimatedQuota)}
+            ) : (
+              <div className="space-y-3 text-gray-700">
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span>総記録数</span>
+                  <span className="font-semibold text-blue-600">
+                    {entries.length} 件
+                  </span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span>メモ付き記録</span>
+                  <span className="font-semibold text-purple-600">
+                    {entries.filter((e) => e.note && e.note.trim() !== '').length}{' '}
+                    件
+                  </span>
+                </div>
+                {dbStats && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span>使用ストレージ</span>
+                      <span className="font-semibold text-green-600">
+                        {formatBytes(dbStats.estimatedUsage)}
                       </span>
                     </div>
-                  )}
-                </>
-              )}
-            </div>
+                    {dbStats.estimatedQuota && (
+                      <div className="flex justify-between py-2">
+                        <span>利用可能容量</span>
+                        <span className="font-semibold text-gray-500">
+                          {formatBytes(dbStats.estimatedQuota)}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </section>
 
           {/* データエクスポート */}

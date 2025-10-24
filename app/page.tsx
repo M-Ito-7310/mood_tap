@@ -6,6 +6,8 @@ import { MoodRecorder } from '@/components/mood/MoodRecorder';
 import { useMoodEntries } from '@/hooks/useMoodEntries';
 import { MOOD_ICON, MOOD_LABEL_DISPLAY_NAME } from '@/types/mood';
 import { formatDateJP } from '@/lib/utils';
+import { SkeletonList } from '@/components/ui/SkeletonList';
+import { FadeIn, SlideIn } from '@/components/transitions';
 
 export default function Home() {
   const { entries, isLoading } = useMoodEntries();
@@ -13,9 +15,31 @@ export default function Home() {
   if (isLoading) {
     return (
       <BaseLayout>
-        <Container variant="narrow">
-          <div className="text-center">
-            <div className="text-xl text-[var(--color-text-secondary)]">読み込み中...</div>
+        <Container variant="wide">
+          <div className="space-y-8">
+            {/* Header skeleton */}
+            <header className="text-center space-y-4 animate-pulse">
+              <div className="h-12 bg-white/20 rounded w-48 mx-auto"></div>
+              <div className="h-6 bg-white/20 rounded w-64 mx-auto"></div>
+            </header>
+
+            {/* Recorder skeleton */}
+            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+              <div className="space-y-6 animate-pulse">
+                <div className="h-6 bg-white/20 rounded w-32 mx-auto"></div>
+                <div className="flex justify-center gap-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="w-16 h-16 bg-white/20 rounded-full"></div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* List skeleton */}
+            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+              <div className="h-8 bg-white/20 rounded w-32 mb-6 animate-pulse"></div>
+              <SkeletonList count={5} />
+            </section>
           </div>
         </Container>
       </BaseLayout>
@@ -26,22 +50,27 @@ export default function Home() {
     <BaseLayout>
       <Container variant="wide">
         <div className="space-y-8">
-          <header className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text-primary)]">
-              MoodTap
-            </h1>
-            <p className="text-lg md:text-xl text-[var(--color-text-secondary)]">
-              たった3秒で、心の健康を可視化する
-            </p>
-          </header>
+          <FadeIn delay={0}>
+            <header className="text-center space-y-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text-primary)]">
+                MoodTap
+              </h1>
+              <p className="text-lg md:text-xl text-[var(--color-text-secondary)]">
+                たった3秒で、心の健康を可視化する
+              </p>
+            </header>
+          </FadeIn>
 
           {/* 気分記録セクション */}
-          <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
-            <MoodRecorder />
-          </section>
+          <SlideIn delay={100} direction="up">
+            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+              <MoodRecorder />
+            </section>
+          </SlideIn>
 
           {/* 記録一覧 */}
-          <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
+          <SlideIn delay={200} direction="up">
+            <section className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg">
             <h2 className="text-2xl font-semibold mb-6 text-[var(--color-text-primary)]">
               最近の記録
             </h2>
@@ -80,13 +109,16 @@ export default function Home() {
                 ))}
               </div>
             )}
-          </section>
+            </section>
+          </SlideIn>
 
-          <footer className="text-center pt-8">
-            <p className="text-sm text-[var(--color-text-muted)]">
-              Phase 3: Mood Recording UI 実装中
-            </p>
-          </footer>
+          <FadeIn delay={300}>
+            <footer className="text-center pt-8">
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Phase 3: Mood Recording UI 実装中
+              </p>
+            </footer>
+          </FadeIn>
         </div>
       </Container>
     </BaseLayout>

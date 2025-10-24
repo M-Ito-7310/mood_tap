@@ -19,6 +19,7 @@ import { DateRangeSelector, type DateRangePreset } from './DateRangeSelector';
 import { MoodDetailModal } from '@/components/mood/MoodDetailModal';
 import { MoodEntry, MOOD_COLOR, MOOD_LABEL_DISPLAY_NAME } from '@/types/mood';
 import { generateUUID, getNowISO } from '@/lib/utils';
+import { SkeletonCalendar } from '@/components/ui/SkeletonCalendar';
 
 interface DateRange {
   start: Date;
@@ -31,7 +32,7 @@ export function MoodCalendar() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { entries, saveEntry, deleteEntry } = useMoodEntries();
+  const { entries, saveEntry, deleteEntry, isLoading } = useMoodEntries();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -125,6 +126,15 @@ export function MoodCalendar() {
         return isWithinInterval(entryDate, { start: dateRange.start, end: dateRange.end });
       })
     : entries;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto">
+        <SkeletonCalendar />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">

@@ -8,6 +8,7 @@ import { successHaptic, errorHaptic } from '@/lib/haptics';
 import { MoodIconButton } from './MoodIconButton';
 import { MoodSuccessToast } from './MoodSuccessToast';
 import { MoodNoteInput } from './MoodNoteInput';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export function MoodRecorder() {
   const { saveEntry, getEntryByDate } = useMoodEntries();
@@ -129,8 +130,9 @@ export function MoodRecorder() {
             <button
               onClick={handleNoteSave}
               disabled={isSaving}
-              className="mt-4 w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
+              {isSaving && <LoadingSpinner size="sm" />}
               {isSaving ? '保存中...' : 'メモを保存'}
             </button>
           </div>

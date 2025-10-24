@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- グラデーション背景 -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景円 -->
+  <circle cx="96" cy="96" r="76.80000000000001" fill="url(#gradient)"/>
+
+  <!-- 顔のベース（白い円） -->
+  <circle cx="96" cy="96" r="65.28" fill="white" opacity="0.95"/>
+
+  <!-- 左目 -->
+  <circle cx="72.96000000000001" cy="76.8" r="9.600000000000001" fill="#3B82F6"/>
+
+  <!-- 右目 -->
+  <circle cx="119.03999999999999" cy="76.8" r="9.600000000000001" fill="#3B82F6"/>
+
+  <!-- スマイル -->
+  <path d="M 48 105.6 Q 96 124.8 144 105.6"
+        stroke="#3B82F6"
+        stroke-width="5.76"
+        fill="none"
+        stroke-linecap="round"/>
+</svg>

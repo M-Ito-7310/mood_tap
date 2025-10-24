@@ -20,7 +20,7 @@ MoodTapは、1日1回、気分を5段階のアイコンでタップするだけ�
 - ✅ **統計・可視化**: 週次/月次グラフ、平均スコア、連続記録日数
 
 #### MVP Phase 2 (拡張機能)
-- 🔶 **PWA対応**: オフライン利用、ホーム画面に追加
+- ✅ **PWA対応**: オフライン利用、ホーム画面に追加可能
 - 🔶 **データエクスポート**: CSV形式でのエクスポート
 - 🔶 **ユーザー認証**: NextAuth.jsによるメールアドレス登録
 - 🔶 **データベース連携**: Neon PostgreSQLでの永続化
@@ -30,18 +30,24 @@ MoodTapは、1日1回、気分を5段階のアイコンでタップするだけ�
 ## 技術スタック
 
 ### フロントエンド
-- **Next.js 14** (App Router)
+- **Next.js 16** (App Router)
 - **TypeScript**
-- **Tailwind CSS**
-- **Lucide React** (アイコンライブラリ)
+- **Tailwind CSS v4**
+- **React 19**
 
-### バックエンド・データベース
-- **Phase 1**: LocalStorage(クライアントサイド)
-- **Phase 2**: Neon PostgreSQL + Drizzle ORM
+### データ管理
+- **IndexedDB** (Dexie.js) - オフラインファースト永続化
+- **Service Worker** - PWAキャッシング戦略
+
+### PWA機能
+- **@ducanh2912/next-pwa** - Service Worker自動生成
+- **Workbox** - キャッシング戦略
+- **マニフェスト** - インストール可能なアプリ
+- **オフライン対応** - 完全なオフライン動作
 
 ### デプロイ・インフラ
 - **Vercel** (ホスティング)
-- **PWA対応** (オフライン利用)
+- **PWA対応** (オフライン利用、ホーム画面追加)
 
 ---
 
@@ -120,6 +126,26 @@ npm run dev
 ```
 
 詳細は `docs/implementation/20251023_01-project-setup.md` を参照してください。
+
+### PWA機能のテスト
+
+Progressive Web App機能をテストするには：
+
+```bash
+# 本番ビルド実行
+npm run build
+
+# 本番サーバー起動
+npm start
+```
+
+ブラウザで `http://localhost:3000` を開き、以下を確認：
+- ✅ Service Workerの登録（DevTools > Application > Service Workers）
+- ✅ PWAマニフェスト（DevTools > Application > Manifest）
+- ✅ オフライン動作（DevTools > Network > Offline）
+- ✅ ホーム画面への追加可能
+
+詳細は [`docs/PWA-TEST-GUIDE.md`](docs/PWA-TEST-GUIDE.md) を参照してください。
 
 ---
 

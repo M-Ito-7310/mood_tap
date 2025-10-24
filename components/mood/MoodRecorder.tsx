@@ -13,15 +13,19 @@ export function MoodRecorder() {
   const [selectedScore, setSelectedScore] = useState<MoodScore | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [todayEntry, setTodayEntry] = useState<MoodEntry | undefined>(undefined);
 
   // 今日の記録を取得
-  const todayEntry = getEntryByDate(getTodayISO());
-
   useEffect(() => {
-    if (todayEntry) {
-      setSelectedScore(todayEntry.moodScore);
-    }
-  }, [todayEntry]);
+    const loadTodayEntry = async () => {
+      const entry = await getEntryByDate(getTodayISO());
+      setTodayEntry(entry);
+      if (entry) {
+        setSelectedScore(entry.moodScore);
+      }
+    };
+    loadTodayEntry();
+  }, [getEntryByDate]);
 
   const handleMoodClick = async (score: MoodScore) => {
     setIsSaving(true);
@@ -36,10 +40,11 @@ export function MoodRecorder() {
       note: todayEntry?.note,
     };
 
-    const success = saveEntry(newEntry);
+    const success = await saveEntry(newEntry);
 
     if (success) {
       setSelectedScore(score);
+      setTodayEntry(newEntry);
       setShowSuccess(true);
 
       // 成功ハプティックフィードバック

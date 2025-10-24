@@ -2,70 +2,89 @@
 
 import { useState, useEffect } from 'react';
 import { MoodEntry } from '@/types/mood';
-
-const STORAGE_KEY = 'moodtap_entries';
+import { initializeDatabase } from '@/lib/db';
+import { migrateFromLocalStorage } from '@/lib/migration';
+import {
+  getAllMoodEntries,
+  saveMoodEntry,
+  deleteMoodEntry as deleteMoodEntryFromDB,
+  deleteAllMoodEntries,
+  getMoodEntryByDate as getMoodEntryByDateFromDB,
+  getMoodEntriesInRange as getMoodEntriesInRangeFromDB,
+} from '@/lib/storage';
+import { logError, getErrorMessage } from '@/lib/offline';
 
 /**
  * 気分エントリーを管理するカスタムフック
- * Phase 4でIndexedDBに移行予定
+ * IndexedDB + Dexie.js使用
  */
 export function useMoodEntries() {
   const [entries, setEntries] = useState<MoodEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // 初期ロード
   useEffect(() => {
-    loadEntries();
+    initializeAndLoad();
   }, []);
 
   /**
-   * localStorageからエントリーを読み込み
+   * データベース初期化とデータロード
    */
-  const loadEntries = () => {
+  const initializeAndLoad = async () => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as MoodEntry[];
-        // 日付の降順でソート (新しい順)
-        const sorted = parsed.sort((a, b) => b.date.localeCompare(a.date));
-        setEntries(sorted);
+      setIsLoading(true);
+      setError(null);
+
+      // IndexedDB初期化
+      await initializeDatabase();
+
+      // localStorageからのマイグレーション
+      const migrationResult = await migrateFromLocalStorage();
+      if (!migrationResult.success) {
+        console.warn('Migration had errors:', migrationResult.errors);
       }
-    } catch (error) {
-      console.error('Failed to load mood entries:', error);
+
+      // データロード
+      await loadEntries();
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      logError(err, 'useMoodEntries.initializeAndLoad');
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
+   * IndexedDBからエントリーを読み込み
+   */
+  const loadEntries = async () => {
+    try {
+      const allEntries = await getAllMoodEntries('desc');
+      setEntries(allEntries);
+      setError(null);
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      logError(err, 'useMoodEntries.loadEntries');
+      throw err;
+    }
+  };
+
+  /**
    * エントリーを保存
    */
-  const saveEntry = (entry: MoodEntry): boolean => {
+  const saveEntry = async (entry: MoodEntry): Promise<boolean> => {
     try {
-      // 既存のエントリーを検索（同じIDまたは同じ日付）
-      const existingIndex = entries.findIndex(
-        (e) => e.id === entry.id || e.date === entry.date
-      );
-
-      let updatedEntries: MoodEntry[];
-      if (existingIndex >= 0) {
-        // 更新
-        updatedEntries = [...entries];
-        updatedEntries[existingIndex] = entry;
-      } else {
-        // 新規追加
-        updatedEntries = [entry, ...entries];
-      }
-
-      // 日付の降順でソート
-      const sorted = updatedEntries.sort((a, b) => b.date.localeCompare(a.date));
-
-      // localStorageに保存
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
-      setEntries(sorted);
+      await saveMoodEntry(entry);
+      await loadEntries(); // データを再読み込み
+      setError(null);
       return true;
-    } catch (error) {
-      console.error('Failed to save mood entry:', error);
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      logError(err, 'useMoodEntries.saveEntry');
       return false;
     }
   };
@@ -73,14 +92,16 @@ export function useMoodEntries() {
   /**
    * エントリーを削除
    */
-  const deleteEntry = (id: string): boolean => {
+  const deleteEntry = async (id: string): Promise<boolean> => {
     try {
-      const filtered = entries.filter((e) => e.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-      setEntries(filtered);
+      await deleteMoodEntryFromDB(id);
+      await loadEntries(); // データを再読み込み
+      setError(null);
       return true;
-    } catch (error) {
-      console.error('Failed to delete mood entry:', error);
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      logError(err, 'useMoodEntries.deleteEntry');
       return false;
     }
   };
@@ -88,27 +109,43 @@ export function useMoodEntries() {
   /**
    * 日付でエントリーを取得
    */
-  const getEntryByDate = (date: string): MoodEntry | undefined => {
-    return entries.find((e) => e.date === date);
+  const getEntryByDate = async (date: string): Promise<MoodEntry | undefined> => {
+    try {
+      return await getMoodEntryByDateFromDB(date);
+    } catch (err) {
+      logError(err, 'useMoodEntries.getEntryByDate');
+      return undefined;
+    }
   };
 
   /**
    * 日付範囲でエントリーを取得
    */
-  const getEntriesInRange = (startDate: string, endDate: string): MoodEntry[] => {
-    return entries.filter((e) => e.date >= startDate && e.date <= endDate);
+  const getEntriesInRange = async (
+    startDate: string,
+    endDate: string
+  ): Promise<MoodEntry[]> => {
+    try {
+      return await getMoodEntriesInRangeFromDB(startDate, endDate);
+    } catch (err) {
+      logError(err, 'useMoodEntries.getEntriesInRange');
+      return [];
+    }
   };
 
   /**
    * すべてのエントリーをクリア
    */
-  const clearAllEntries = (): boolean => {
+  const clearAllEntries = async (): Promise<boolean> => {
     try {
-      localStorage.removeItem(STORAGE_KEY);
-      setEntries([]);
+      await deleteAllMoodEntries();
+      await loadEntries(); // データを再読み込み
+      setError(null);
       return true;
-    } catch (error) {
-      console.error('Failed to clear mood entries:', error);
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      logError(err, 'useMoodEntries.clearAllEntries');
       return false;
     }
   };
@@ -116,6 +153,7 @@ export function useMoodEntries() {
   return {
     entries,
     isLoading,
+    error,
     saveEntry,
     deleteEntry,
     getEntryByDate,

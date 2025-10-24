@@ -16,8 +16,9 @@ import { ja } from 'date-fns/locale';
 import { useMoodEntries } from '@/hooks/useMoodEntries';
 import { CalendarDay } from './CalendarDay';
 import { DateRangeSelector, type DateRangePreset } from './DateRangeSelector';
-import { MoodEntryDetailModal } from './MoodEntryDetailModal';
+import { MoodDetailModal } from '@/components/mood/MoodDetailModal';
 import { MoodEntry, MOOD_COLOR, MOOD_LABEL_DISPLAY_NAME } from '@/types/mood';
+import { generateUUID, getNowISO } from '@/lib/utils';
 
 interface DateRange {
   start: Date;
@@ -30,7 +31,7 @@ export function MoodCalendar() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { entries } = useMoodEntries();
+  const { entries, saveEntry, deleteEntry } = useMoodEntries();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -69,6 +70,35 @@ export function MoodCalendar() {
   const getSelectedEntry = (): MoodEntry | null => {
     if (!selectedDate) return null;
     return getEntryForDate(selectedDate);
+  };
+
+  // モーダル保存処理
+  const handleModalSave = async (updates: Partial<MoodEntry>) => {
+    if (!selectedDate) return;
+
+    const dateString = format(selectedDate, 'yyyy-MM-dd');
+    const existingEntry = getEntryForDate(selectedDate);
+
+    const newEntry: MoodEntry = {
+      id: existingEntry?.id || generateUUID(),
+      date: dateString,
+      moodScore: updates.moodScore!,
+      moodLabel: updates.moodLabel!,
+      note: updates.note,
+      createdAt: existingEntry?.createdAt || getNowISO(),
+      updatedAt: getNowISO(),
+    };
+
+    await saveEntry(newEntry);
+  };
+
+  // モーダル削除処理
+  const handleModalDelete = async () => {
+    if (!selectedDate) return;
+    const entry = getEntryForDate(selectedDate);
+    if (entry) {
+      await deleteEntry(entry.id);
+    }
   };
 
   // 日付範囲プリセット変更
@@ -232,11 +262,13 @@ export function MoodCalendar() {
       </div>
 
       {/* 詳細モーダル */}
-      <MoodEntryDetailModal
+      <MoodDetailModal
         entry={getSelectedEntry()}
         date={selectedDate || new Date()}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onSave={handleModalSave}
+        onDelete={handleModalDelete}
       />
     </div>
   );

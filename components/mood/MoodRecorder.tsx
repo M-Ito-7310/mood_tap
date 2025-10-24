@@ -7,10 +7,12 @@ import { generateUUID, getTodayISO, getNowISO } from '@/lib/utils';
 import { successHaptic, errorHaptic } from '@/lib/haptics';
 import { MoodIconButton } from './MoodIconButton';
 import { MoodSuccessToast } from './MoodSuccessToast';
+import { MoodNoteInput } from './MoodNoteInput';
 
 export function MoodRecorder() {
   const { saveEntry, getEntryByDate } = useMoodEntries();
   const [selectedScore, setSelectedScore] = useState<MoodScore | null>(null);
+  const [note, setNote] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [todayEntry, setTodayEntry] = useState<MoodEntry | undefined>(undefined);
@@ -22,12 +24,17 @@ export function MoodRecorder() {
       setTodayEntry(entry);
       if (entry) {
         setSelectedScore(entry.moodScore);
+        setNote(entry.note || '');
       }
     };
     loadTodayEntry();
   }, [getEntryByDate]);
 
   const handleMoodClick = async (score: MoodScore) => {
+    await saveMoodEntry(score);
+  };
+
+  const saveMoodEntry = async (score: MoodScore) => {
     setIsSaving(true);
 
     const newEntry: MoodEntry = {
@@ -37,7 +44,7 @@ export function MoodRecorder() {
       moodLabel: MOOD_SCORE_LABEL_MAP[score],
       createdAt: todayEntry?.createdAt || getNowISO(),
       updatedAt: todayEntry ? getNowISO() : undefined,
-      note: todayEntry?.note,
+      note: note.trim() || undefined,
     };
 
     const success = await saveEntry(newEntry);
@@ -59,6 +66,19 @@ export function MoodRecorder() {
     }
 
     setIsSaving(false);
+  };
+
+  // メモが変更されたら自動保存
+  const handleNoteChange = (newNote: string) => {
+    setNote(newNote);
+  };
+
+  const handleNoteSave = async () => {
+    if (!selectedScore) {
+      alert('気分を先に選択してください');
+      return;
+    }
+    await saveMoodEntry(selectedScore);
   };
 
   const moodOptions: Array<{ score: MoodScore; label: typeof MOOD_SCORE_LABEL_MAP[MoodScore] }> = [
@@ -93,6 +113,29 @@ export function MoodRecorder() {
           />
         ))}
       </div>
+
+      {/* メモ入力セクション */}
+      {selectedScore && (
+        <div className="mt-8 max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+              メモを追加 (任意)
+            </h3>
+            <MoodNoteInput
+              value={note}
+              onChange={handleNoteChange}
+              disabled={isSaving}
+            />
+            <button
+              onClick={handleNoteSave}
+              disabled={isSaving}
+              className="mt-4 w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? '保存中...' : 'メモを保存'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 成功トースト */}
       {showSuccess && <MoodSuccessToast />}
